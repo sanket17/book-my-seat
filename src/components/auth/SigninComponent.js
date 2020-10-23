@@ -66,7 +66,7 @@ export default function SigninComponent({ history }) {
     }
   };
   return (
-    <React.Fragment>
+    <>
       <PageTitle className="pt-5 pb-4 text-center">New Registration</PageTitle>
       <div className="row justify-content-md-center mr-0 ml-0">
         <div className="col-md-6">
@@ -100,7 +100,7 @@ export default function SigninComponent({ history }) {
           </CardBox>
         </div>
       </div>
-    </React.Fragment>
+    </>
   );
 }
 
