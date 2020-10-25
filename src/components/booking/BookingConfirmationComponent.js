@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import store from 'store';
 import { CardBox, PageTitle, Button } from '../../theme/css/Global';
 
 export default function BookingConfirmationComponent({ history, location }) {
   const onLogout = (event) => {
     event.preventDefault(true);
+    store.set('loginUser', {});
     history.push({
       pathname: '/',
     });

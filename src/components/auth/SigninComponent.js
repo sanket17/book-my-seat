@@ -64,7 +64,7 @@ export default function SigninComponent({ history }) {
     event.preventDefault(true);
     if (isValidForm()) {
       let users = store.get('users');
-      users = [...users, formData];
+      users = [...users, { ...formData, booking: {} }];
       store.set('users', users);
       history.push({
         pathname: '/',

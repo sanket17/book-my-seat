@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { ToastsStore } from 'react-toasts';
+import store from 'store';
 import {
   CardBox,
   PageTitle,
@@ -15,6 +16,7 @@ export default function SeatbookingComponent({ history, location }) {
   const [selected, setSelected] = useState([]);
   const [reserved, setReserved] = useState([]);
   const [ticketPrice, setTicketPrice] = useState(0);
+  const [user, setUser] = useState(null);
 
   const normalPrice = Number(process.env.REACT_APP_NORMAL_PRICE);
   const glassPrice = Number(process.env.REACT_APP_GLASS_PRICE);
@@ -23,6 +25,7 @@ export default function SeatbookingComponent({ history, location }) {
     if (isLoading && seat.length === 0) {
       const normalCount = Number(process.env.REACT_APP_NORMAL_COUNT);
       const glassCount = Number(process.env.REACT_APP_GLASS_COUNT);
+      let user = store.get('loginUser');
 
       const totalRow = Math.floor((normalCount + glassCount) / 10);
       const lastRow = (normalCount + glassCount) % 10;
@@ -58,9 +61,54 @@ export default function SeatbookingComponent({ history, location }) {
       }
       currSeat = [...currSeat, [...rowObj]];
       setSeat(currSeat);
+      if (Object.keys(store.get('reserved')).length !== 0) {
+        const reservedObj = store.get('reserved');
+        if (Object.keys(reservedObj[location.state.movieName]) !== 0) {
+          if (
+            Object.keys(
+              reservedObj[location.state.movieName][location.state.timing]
+            ) !== 0
+          ) {
+            setReserved(
+              reservedObj[location.state.movieName][location.state.timing]
+            );
+          }
+        }
+      }
+      if (Object.keys(user.booking).length !== 0) {
+        if (Object.keys(user.booking[location.state.movieName]).length !== 0) {
+          if (
+            Object.keys(
+              user.booking[location.state.movieName][location.state.timing]
+            ).length !== 0
+          ) {
+            setSelected(
+              user.booking[location.state.movieName][location.state.timing][
+                'seats'
+              ] || []
+            );
+            setTicketPrice(
+              Number(
+                user.booking[location.state.movieName][location.state.timing][
+                  'price'
+                ] || 0
+              )
+            );
+          }
+        }
+      }
+
+      setUser(user);
       setIsLoading(false);
     }
-  }, [isLoading, seat]);
+  }, [
+    isLoading,
+    seat,
+    reserved,
+    location.state.movieName,
+    location.state.timing,
+    user,
+  ]);
 
   const handleChange = (element) => {
     let selectedArr = selected;
@@ -107,6 +155,33 @@ export default function SeatbookingComponent({ history, location }) {
 
   const handleSubmit = (event) => {
     event.preventDefault(true);
+
+    user.booking = {
+      [location.state.movieName]: {
+        [location.state.timing]: {
+          seats: [...selected],
+          price: Number(ticketPrice),
+        },
+      },
+    };
+    store.set('loginUser', user);
+    let allUsers = store.get('users');
+    allUsers.forEach((usr) => {
+      if (usr.email === user.email) {
+        usr.booking = user.booking;
+      }
+    });
+    console.log(allUsers);
+    store.set('users', allUsers);
+
+    let reservedObj = store.get('reserved');
+    reservedObj = {
+      [location.state.movieName]: {
+        [location.state.timing]: [...reserved, ...selected],
+      },
+    };
+    store.set('reserved', reservedObj);
+
     history.push({
       pathname: '/confirm',
       state: {
@@ -240,7 +315,12 @@ export default function SeatbookingComponent({ history, location }) {
             </Button>
           </div>
           <div className="col-6">
-            <Button className="btn btn-light">Cancel</Button>
+            <Button
+              className="btn btn-light"
+              onClick={() => history.push({ pathname: '/show' })}
+            >
+              Cancel
+            </Button>
           </div>
         </div>
       </div>

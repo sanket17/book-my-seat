@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import store from 'store';
+import PropTypes from 'prop-types';
 import { ToastsStore } from 'react-toasts';
 import { CardBox, PageTitle, Button, ErrorLabel } from '../../theme/css/Global';
 
@@ -14,7 +15,6 @@ function Login({ history }) {
   useEffect(() => {
     if (users === null) {
       setUsers(store.get('users'));
-      console.log(Object.keys(store.get('loginUser')).length);
     }
   }, [users]);
 
@@ -69,12 +69,6 @@ function Login({ history }) {
                 </ErrorLabel>
                 <Button className="btn btn-primary w-100 mt-4">LOGIN</Button>
               </form>
-              <div
-                // onClick={redirectToForgetPassword}
-                className="forgot-link text-center mt-4"
-              >
-                Forgot your password?
-              </div>
             </div>
           </CardBox>
         </div>
@@ -82,5 +76,11 @@ function Login({ history }) {
     </React.Fragment>
   );
 }
+
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 export default Login;

@@ -1,10 +1,19 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import store from 'store';
 import styled from 'styled-components';
 import { withRouter, Link } from 'react-router-dom';
 import { Theme } from '../../theme/css/theme';
+import { Link as CustomLink } from '../../theme/css/Global';
 
-function HeaderComponent() {
+function HeaderComponent({ history }) {
+  const onLogout = (event) => {
+    event.preventDefault(true);
+    store.set('loginUser', {});
+    history.push({
+      pathname: '/',
+    });
+  };
   return (
     <HeaderTop>
       <div className="header-container">
@@ -21,11 +30,11 @@ function HeaderComponent() {
               </div>
             ) : (
               <div className="pull-right mt-3">
-                <span> Hello {store.get('loginUser').name}</span>
+                <span> Hello {store.get('loginUser').name} | </span>
 
-                {/* <Link to="/create" className="link-class">
-                  Create New Account
-                </Link> */}
+                <CustomLink onClick={onLogout} className="link-class">
+                  Logout
+                </CustomLink>
               </div>
             )}
           </div>
@@ -163,5 +172,11 @@ const HeaderTop = styled.div`
     }
   }
 `;
+
+HeaderComponent.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 export default withRouter(HeaderComponent);

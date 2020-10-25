@@ -6,9 +6,10 @@ function FooterComponent() {
   return (
     <Footer>
       <div className="footer-container">
-        <div className="row ">
-          <div className="col-12">
-            <div>Book My Seat</div>
+        <div className="row mt-5">
+          <div className="col-12 text-center mt-4">
+            {' '}
+            Booking made more easy...
           </div>
         </div>
       </div>
@@ -24,6 +25,7 @@ const Footer = styled.div`
   z-index: 99;
   display: block;
   margin-top: 20px;
+  height: 70px;
 
   .footer-container {
     padding-right: 15px;
