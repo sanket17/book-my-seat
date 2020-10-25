@@ -1,4 +1,5 @@
 import React from 'react';
+import store from 'store';
 import styled from 'styled-components';
 import { withRouter, Link } from 'react-router-dom';
 import { Theme } from '../../theme/css/theme';
@@ -12,11 +13,21 @@ function HeaderComponent() {
             <div className="title-align">Book My Seat</div>
           </div>
           <div className="col-12 col-sm-12 col-md-6 col-lg-6">
-            <div className="pull-right mt-3">
-              <Link to="/create" className="link-class">
-                Create New Account
-              </Link>
-            </div>
+            {Object.keys(store.get('loginUser')).length === 0 ? (
+              <div className="pull-right mt-3">
+                <Link to="/create" className="link-class">
+                  Create New Account
+                </Link>
+              </div>
+            ) : (
+              <div className="pull-right mt-3">
+                <span> Hello {store.get('loginUser').name}</span>
+
+                {/* <Link to="/create" className="link-class">
+                  Create New Account
+                </Link> */}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import store from 'store';
+import { ToastsStore } from 'react-toasts';
 import { CardBox, PageTitle, Button, ErrorLabel } from '../../theme/css/Global';
 
 import { getFields } from '../../shared/FieldRenderer';
 import { LoginFormConstant } from '../../constants/LoginFormConstant';
 
-function Login(props) {
+function Login({ history }) {
   const [loginFormData, setLoginFormData] = useState({});
   const [error, setError] = useState({});
+  const [users, setUsers] = useState(null);
+
+  useEffect(() => {
+    if (users === null) {
+      setUsers(store.get('users'));
+      console.log(Object.keys(store.get('loginUser')).length);
+    }
+  }, [users]);
 
   const handleFieldChange = ({ key, value }) => {
-    setError({});
+    if (error[key]) {
+      delete error[key];
+      setError(error);
+    }
+
     setLoginFormData({
       ...loginFormData,
       [key]: value,
@@ -19,7 +32,19 @@ function Login(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault(true);
-    console.log(loginFormData);
+    const loginUser = users.filter(
+      (user) =>
+        user.email === loginFormData.email &&
+        user.password === loginFormData.password
+    );
+    if (loginUser.length !== 0) {
+      store.set('loginUser', loginUser[0]);
+      history.push({
+        pathname: '/show',
+      });
+    } else {
+      ToastsStore.error('Invalid credentials.');
+    }
   };
 
   return (

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PropTypes } from 'prop-types';
+import store from 'store';
 import { CardBox, PageTitle, Button, ErrorLabel } from '../../theme/css/Global';
 import { getFields } from '../../shared/FieldRenderer';
 import { SigninFormConstant } from '../../constants/LoginFormConstant';
@@ -62,7 +63,12 @@ export default function SigninComponent({ history }) {
   const handleSubmit = (event) => {
     event.preventDefault(true);
     if (isValidForm()) {
-      console.log(formData);
+      let users = store.get('users');
+      users = [...users, formData];
+      store.set('users', users);
+      history.push({
+        pathname: '/',
+      });
     }
   };
   return (

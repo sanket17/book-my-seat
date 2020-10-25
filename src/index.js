@@ -2,12 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import HttpsRedirect from 'react-https-redirect';
+import store from 'store';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/scss/bootstrap.scss';
 import './theme/css/style.scss';
+
+store.set('users', []);
+store.set('loginUser', {});
+store.set('reserved', {});
 
 const app = (
   <HttpsRedirect>
